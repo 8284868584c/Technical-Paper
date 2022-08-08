@@ -1,0 +1,82 @@
+                                          #  Full-text search ( FTS )
+
+        Full-text search, or FTS, is a technique used by search engines to find results in a database.
+You can use it to power search results on websites like shops, search engines, newspapers, and more.
+
+Technically speaking, database management systems (DBMS) like MySQL usually allow partial text lookups using LIKE clauses.
+## Step 1 — Creating Test Data :
+
+    a) mysql -u root -p  
+    b) CREATE DATABASE testdb;
+    c) USE testdb;
+    d) CREATE TABLE news (id INT NOT NULL AUTO_INCREMENT,
+                           title TEXT NOT NULL,
+                           content TEXT NOT NULL,
+                           author TEXT NOT NULL,
+
+                           PRIMARY KEY (id)
+                          );
+    e) INSERT INTO news (id, title, content, author) VALUES 
+                        (1, 'Pacific Northwest high-speed rail line', 'Currently there are only a few options for traveling the 140 
+                            miles between Seattle and Vancouver and none of them are ideal.', 'Greg'),
+                        (2, 'Hitting the beach was voted the best part of life in the region', 'Exploring tracks and trails was second 
+                            most popular, followed by visiting the shops and then traveling to local parks.', 'Ethan'),
+                        (3, 'Machine Learning from scratch', 'Bare bones implementations of some of the foundational models and algorithms.', 'Jo');
+
+## Step 2 — Creating a FTS Index and Using FTS Functions :
+    
+    a) ALTER TABLE news ADD FULLTEXT (title, content, author);
+    b) SELECT * FROM news WHERE MATCH (title,content,author) AGAINST ('Seattle beach' IN NATURAL LANGUAGE MODE)\G
+    
+## Step 3 — Refining FTS Results :
+    
+    a) SELECT id, MATCH (title,content,author) AGAINST ('traveling to parks') as score FROM news;
+    b) SELECT id, MATCH (title,content,author) AGAINST ('traveling to parks') as score FROM news
+       WHERE MATCH (title,content,author) AGAINST ('traveling to parks') > 0 ORDER BY score DESC;
+    c) SELECT * FROM news WHERE MATCH (title,content,author) AGAINST ('traveling -Seattle' IN BOOLEAN MODE)\G
+    d) SELECT * FROM news WHERE MATCH (title,content,author) AGAINST ('"traveling miles" @4' IN BOOLEAN MODE)\G
+    
+Ref link : https://www.digitalocean.com/community/tutorials/how-to-improve-database-searches-with-full-text-search-in-mysql-5-6-on-ubuntu-16-04
+    
+    
+                                              # Elasticsearch , Solr and Lucene
+    
+## What is Elasticsearch :  
+                    Elasticsearch is a distributed, free and open search and analytics engine for all types of data, including textual, numerical,
+   geospatial, structured, and unstructured. Elasticsearch is built on Apache Lucene and was first released in 2010 by Elasticsearch N.V. 
+   (now known as Elastic). Known for its simple REST APIs, distributed nature, speed, and scalability, Elasticsearch is the central component of the 
+   Elastic Stack, a set of free and open tools for data ingestion, enrichment, storage, analysis, and visualization. Commonly referred to as the ELK
+   Stack (after Elasticsearch, Logstash, and Kibana), the Elastic Stack now includes a rich collection of lightweight shipping agents known as Beats for
+   sending data to Elasticsearch.
+         
+Ref link : https://www.elastic.co/what-is/elasticsearch 
+
+## Solr :
+        Solr is the popular, blazing-fast, open source for search platform built on Apache Lucene.
+Its major features include powerful full-text search, hit highlighting, faceted search, dynamic clustering, database integration, rich document 
+handling, and geospatial search. 
+
+    ### Solr Modules and Additional Libraries :
+                >> SolrCloud.spec.replicas
+                >> pvcTemplate.spec
+                >> SolrCloud.Spec.updateStrategy
+                >> SolrCloud.Spec.solrAddressability
+                >> ACL :
+                       a) Admin: SolrCloud.spec.zookeeperRef.connectionInfo.acl
+                       b) Read Only: SolrCloud.spec.zookeeperRef.connectionInfo.readOnlyAcl
+                
+## Lucene :
+        A core search library, named Lucene core, as well as PyLucene, a python binding for Lucene.
+Lucene Core is a Java library providing powerful indexing and search features, as well as spellchecking, hit highlighting and advanced 
+analysis/tokenization capabilities. The PyLucene sub project provides Python bindings for Lucene Core.
+    >> Lucene.NET is a high performance search library for .NET.
+    >> Latest Version - Lucene.NET 4.8.0 Beta
+            - The beta version is extremely stable
+            - Has more than 7800+ passing unit tests
+            - Integrates well with .NET 6.0, .NET 5.0 and .NET Core 2+
+            - Supports .NET Standard 2.1 and .NET Standard 2.0
+            - Supports .NET Framework 4.5+
+            - Some developers already use it in production environments
+
+Ref link : https://lucenenet.apache.org/
+ 
